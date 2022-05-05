@@ -10,6 +10,7 @@ import TutorialsList from "./components/tutorials-list.component";
 import ProductsList from "./components/products-list.component";
 import Product from "./components/product.component";
 import AddProduct from "./components/add-product.component";
+import PurchseProduct from "./components/purchase-product.component"
 
 class App extends Component {
   render() {
@@ -42,6 +43,7 @@ class App extends Component {
             <Route exact path={["/", "/tutorials"]} component={TutorialsList} />
             <Route exact path={["/", "/products"]} component={ProductsList} />
             <Route path="/products/:id" component={Product} />
+            <Route path="/viewproduct/:id" component={PurchseProduct} />
             <Route exact path="/add" component={AddProduct} />
             <Route path="/tutorials/:id" component={Tutorial} />
           </Switch>

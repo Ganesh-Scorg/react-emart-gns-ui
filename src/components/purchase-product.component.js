@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import ProductDataService from "../services/product.service";
+import Invoice from "./invoice.component"
+import {Switch, Route, Link} from "react-router-dom"
 
-export default class Product extends Component {
+export default class PurchaseProduct extends Component {
   constructor(props) {
     super(props);
-    this.onChangePrice = this.onChangePrice.bind(this);
-    this.onChangeStock = this.onChangeStock.bind(this);
     this.getProduct = this.getProduct.bind(this);
-    this.updateProduct = this.updateProduct.bind(this);
-    this.deleteProduct = this.deleteProduct.bind(this);
+    this.selectProduct = this.selectProduct.bind(this);
+    this.buyProduct = this.buyProduct.bind(this);
 
     this.state = {
       currentProduct: {
@@ -19,43 +19,31 @@ export default class Product extends Component {
         make: "",
         price: null,
         stock: null,
-        sellerid: ""
+        sellerid: "",
       },
-      message: ""
+      message: "",
+      quantity: "",
+      billedAmount: 0,
+      isPurchased: false,
+      responseInvoice: ""
     };
   }
 
   componentDidMount() {
+    this.setState({
+      isPurchased: false
+     });
     this.getProduct(this.props.match.params.id);
   }
 
-  onChangeStock(e) {
-    const stock = e.target.value;
-
-    this.setState(function(prevState) {
-      return {
-        currentProduct: {
-          ...prevState.currentProduct,
-          stock: stock
-        }
-      };
+  onChangeQuantity = (e) => {
+    this.setState({quantity: e.target.value,
+        billedAmount: e.target.value*this.state.currentProduct.price
     });
+    //this.setState({billedAmount: this.state.quantity*this.state.currentProduct.price});
   };
 
-  onChangePrice(e) {
-    const price = e.target.value;
-
-    this.setState(function(prevState) {
-      return {
-        currentProduct: {
-          ...prevState.currentProduct,
-          price: price
-        }
-      };
-    });
-  };
-
-
+  
   getProduct(id) {
     ProductDataService.get(id)
       .then(response => {
@@ -70,16 +58,15 @@ export default class Product extends Component {
   };
 
 
-  updateProduct() {
-    ProductDataService.update(
+  selectProduct() {
+    ProductDataService.selectProduct(
       this.state.currentProduct.id,
-      this.state.currentProduct.price,
-      this.state.currentProduct.stock
+      this.state.quantity
     )
       .then(response => {
         console.log(response.data);
         this.setState({
-          message: "The Product was updated successfully!"
+          message: "The Product added to the Cart!"
         });
       })
       .catch(e => {
@@ -87,16 +74,24 @@ export default class Product extends Component {
       });
   }
 
-  deleteProduct() {    
-    ProductDataService.delete(this.state.currentProduct.id)
+  buyProduct() {
+    ProductDataService.buyProduct(
+      this.state.currentProduct.id,
+      this.state.quantity
+    )
       .then(response => {
-        console.log(response.data);
-        this.props.history.push('/Products')
+          this.setState({
+             responseInvoice: response.data,
+             isPurchased: true
+            });
+          console.log(this.state.responseInvoice);
       })
       .catch(e => {
         console.log(e);
       });
   }
+
+  
 
   render() {
     const { currentProduct } = this.state;
@@ -161,20 +156,29 @@ export default class Product extends Component {
                 <label htmlFor="price">Price</label>
                 <input
                   type="text"
+                  disabled="true"
                   className="form-control"
                   id="price"
                   value={currentProduct.price}
-                  onChange={this.onChangePrice}
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="stock">Stock</label>
+                <label htmlFor="quantity">Quantity</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="stock"
-                  value={currentProduct.stock}
-                  onChange={this.onChangeStock}
+                  id="quantity"
+                  value={this.state.quantity}
+                  onChange={this.onChangeQuantity}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="billedAmount">Total Bill</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="billedAmount"
+                  value={this.state.billedAmount}
                 />
               </div>
 
@@ -182,19 +186,24 @@ export default class Product extends Component {
 
             <button
               className="badge badge-danger mr-2"
-              onClick={this.deleteProduct}
+              onClick={this.selectProduct}
             >
-              Delete
+              Add to cart
             </button>
 
             <button
               type="submit"
               className="badge badge-success"
-              onClick={this.updateProduct}
+              onClick={this.buyProduct}
             >
-              Update
+              Buy
             </button>
-            <p>{this.state.message}</p>
+            
+            <div>{
+            this.state.isPurchased ? <Invoice responseInvoice={this.state.responseInvoice}></Invoice> : 
+            <div><span> { this.state.message}</span> <Link to={"/products/"} className="badge badge-warning">
+            Shop more </Link> </div>
+            } </div>
           </div>
         ) : (
           <div>

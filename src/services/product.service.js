@@ -1,4 +1,5 @@
 import http_seller from "./http-seller";
+import http_buyer from "./http_buyer"
 
 class ProductDataService {
   getAll() {
@@ -25,7 +26,25 @@ class ProductDataService {
     return http_seller.delete(`/`);
   }
 
+  selectProduct(id, quantity)
+  {
+    return http_buyer.post(`/cart/select/${id}/${quantity}`);
+  }
 
+  buyProduct(id, quantity)
+  {
+    return http_buyer.post(`/buy/${id}/${quantity}`);
+  }
+
+  buyAllProductsFromCart()
+  {
+    return http_buyer.post(`/buy`);
+  }
+
+  buyAllProductsFromCart()
+  {
+    return http_buyer.get(`/buy/history`);
+  }
 }
 
 export default new ProductDataService();

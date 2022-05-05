@@ -13,7 +13,7 @@ export default class ProductsList extends Component {
 
     this.state = {
       products: [],
-      currentTutorial: null,
+      currentProduct: null,
       currentIndex: -1,
       searchTitle: ""
     };
@@ -124,9 +124,9 @@ export default class ProductsList extends Component {
               </div>
               <div>
                 <label>
-                  <strong>Product Name:</strong>
+                  <strong>Product Model:</strong>
                 </label>{" "}
-                {currentProduct.name}
+                {currentProduct.model}
               </div>
               <div>
                 <label>
@@ -134,12 +134,24 @@ export default class ProductsList extends Component {
                 </label>{" "}
                 {currentProduct.description}
               </div>
+              <div>
+                <label>
+                  <strong>Price:</strong>
+                </label>{" "}
+                {currentProduct.price}
+              </div>
 
               <Link
                 to={"/products/" + currentProduct.id}
                 className="badge badge-warning"
               >
                 Edit
+              </Link>
+              <Link
+                to={"/viewproduct/" + currentProduct.id}
+                className="badge badge-warning"
+              >
+                View
               </Link>
             </div>
           ) : (
