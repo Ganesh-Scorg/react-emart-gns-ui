@@ -2,55 +2,50 @@ import React, { Component } from "react";
 import {Switch, Route, Link} from "react-router-dom"
 import ProductDataService from "../services/product.service";
 
-export default class Invoice extends Component {
+export default class PurchaseInvoice extends Component {
   constructor(props) {
     super(props);
     console.log("Insie Invoce");
     console.log(props);
 
     this.state = {
-       invoiceid: props.responseInvoice.invoiceid,
-        buyername: props.responseInvoice.buyername,
-        date_time: props.responseInvoice.date_time,
-        billedAmount: props.responseInvoice.billedAmount,
-       // products: [],
-        product2: [],
-
+        currentInvoice: {
+            invoiceid: "",
+            buyername: "",
+            date_time: null,
+            billedAmount: 0,
+            products: [],
+        },
         message: ""
     };
   }
 
-  state = {
-     invoiceid: this.props.responseInvoice.invoiceid,
-     buyername: this.props.responseInvoice.buyername,
-     date_time: this.props.responseInvoice.date_time,
-     billedAmount: this.props.responseInvoice.billedAmount,
-     //products: this.props.responseInvoice.products,
-     product2: [
-      {
-        "id": "1",
-        "name": "Ganesh",
-        "model": "123",
-        "price": "3455"
-      },
-      {
-        "id": "2",
-        "name": "Ganesh",
-        "model": "123",
-        "price": "3455"
-      }
-    ],
-     message: ""
- };
+  componentDidMount() {
+    this.getInvoice(this.props.id);
+  }
+
+  getInvoice(id) {
+    ProductDataService.getPurchaseInvoice(id)
+      .then(response => {
+        this.setState({
+          currentInvoice: response.data
+        });
+        console.log(response.data);
+      })
+      .catch(e => {
+        console.log(e);
+        this.getInvoice(this.props.match.params.id);
+      });
+  };
  
 
   render() {
-    //const { currentInvoice } = this.state;
+    const { currentInvoice } = this.state;
 
     return (
       <div>
         {
-          this.state.invoiceid ? (
+          currentInvoice ? (
           <div className="edit-form">
             <h4>Invoice</h4>
               <div className="form-group">
@@ -60,7 +55,7 @@ export default class Invoice extends Component {
                   disabled="true"
                   className="form-control"
                   id="id"
-                  value={this.state.invoiceid ? this.state.invoiceid : ""}
+                  value={currentInvoice.invoiceid ? currentInvoice.invoiceid : ""}
                 />
               </div>
               <div className="form-group">
@@ -70,7 +65,7 @@ export default class Invoice extends Component {
                   disabled="true"
                   className="form-control"
                   id="name"
-                  value={this.state.buyername}
+                  value={currentInvoice.buyername}
                 />
               </div>
               <div className="form-group">
@@ -80,7 +75,7 @@ export default class Invoice extends Component {
                   disabled="true"
                   className="form-control"
                   id="billedDate"
-                  value={this.state.date_time}
+                  value={currentInvoice.date_time}
                 />
               </div>
               <div className="form-group">
@@ -90,15 +85,24 @@ export default class Invoice extends Component {
                   disabled="true"
                   className="form-control"
                   id="billedAmount"
-                  value={this.state.billedAmount}
+                  value={currentInvoice.billedAmount}
                 />
               </div>
 
               <div>
-                <table>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                        <th scope="col">Sr. No.</th>
+                        <th scope="col">Product ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Model</th>
+                        <th scope="col">Price</th>
+                        </tr>
+                    </thead>  
                     <tbody>
                         {
-                            this.state.product2.map((product, i) => <TableRow indx= {i} data = {product} />)
+                            currentInvoice.products.map((product, i) => <TableRow indx= {i+1} data = {product} />)
                         }
                     </tbody>
                 </table>
@@ -124,15 +128,12 @@ class TableRow extends Component
 {
     render()
     {
-        //console.log(this.props.data);
-
         return (
             <tr>
                 <td>{this.props.indx}</td>
                 <td>{this.props.data.id}</td>
                 <td>{this.props.data.name}</td>
                 <td>{this.props.data.model}</td>
-
                 <td>{this.props.data.price}</td>              
             </tr>
 

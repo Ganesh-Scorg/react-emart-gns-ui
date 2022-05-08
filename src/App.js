@@ -11,6 +11,9 @@ import ProductsList from "./components/products-list.component";
 import Product from "./components/product.component";
 import AddProduct from "./components/add-product.component";
 import PurchseProduct from "./components/purchase-product.component"
+import CartList from "./components/cart-list.component"
+import PurchaseInvoice from "./components/purchase-invoice.component"
+import PurchaseHistoryList from "./components/purchase-history-list.component"
 
 class App extends Component {
   render() {
@@ -36,13 +39,26 @@ class App extends Component {
              Products
            </Link>
          </li>
+         <li className="nav-item">
+           <Link to={"/cart"} className="nav-link">
+             Cart
+           </Link>
+         </li>
+         <li className="nav-item">
+           <Link to={"/purchasehistory"} className="nav-link">
+           PurchaseHistoryList
+           </Link>
+         </li>
        </div>
      </nav>
      <div className="container mt-3">
           <Switch>
             <Route exact path={["/", "/tutorials"]} component={TutorialsList} />
             <Route exact path={["/", "/products"]} component={ProductsList} />
+            <Route exact path={["/", "/cart"]} component={CartList} />
+            <Route exact path={["/", "/purchasehistory"]} component={PurchaseHistoryList} />
             <Route path="/products/:id" component={Product} />
+            <Route path="/invoice/:id" component={PurchaseInvoice} />
             <Route path="/viewproduct/:id" component={PurchseProduct} />
             <Route exact path="/add" component={AddProduct} />
             <Route path="/tutorials/:id" component={Tutorial} />

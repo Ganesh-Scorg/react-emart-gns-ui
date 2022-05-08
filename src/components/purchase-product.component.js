@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ProductDataService from "../services/product.service";
 import Invoice from "./invoice.component"
+import PurchaseInvoice from "./purchase-invoice.component"
 import {Switch, Route, Link} from "react-router-dom"
 
 export default class PurchaseProduct extends Component {
@@ -79,14 +80,21 @@ export default class PurchaseProduct extends Component {
       this.state.currentProduct.id,
       this.state.quantity
     )
-      .then(response => {
+    .then(response => {
           this.setState({
              responseInvoice: response.data,
              isPurchased: true
             });
           console.log(this.state.responseInvoice);
+
+         // <Link to={"/invoice/" + this.state.responseInvoice.invoiceid}
+         //   className="badge badge-warning"
+         // >
+         //   Get Invoice
+         // </Link> 
+            
       })
-      .catch(e => {
+    .catch(e => {
         console.log(e);
       });
   }
@@ -198,9 +206,9 @@ export default class PurchaseProduct extends Component {
             >
               Buy
             </button>
-            
             <div>{
-            this.state.isPurchased ? <Invoice responseInvoice={this.state.responseInvoice}></Invoice> : 
+            this.state.isPurchased ?  <PurchaseInvoice id={this.state.responseInvoice.invoiceid}></PurchaseInvoice> 
+            : 
             <div><span> { this.state.message}</span> <Link to={"/products/"} className="badge badge-warning">
             Shop more </Link> </div>
             } </div>
