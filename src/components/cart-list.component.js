@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import ProductDataService from "../services/product.service";
-import { Link } from "react-router-dom";
-import ReactTable from "react-table";  
-//import "react-table/react-table.css"; 
+import { Link, Redirect } from "react-router-dom";
+import PurchaseInvoice from "./purchase-invoice.component"
 
 class CartList extends Component {
   constructor(props) {
@@ -15,7 +14,9 @@ class CartList extends Component {
       products: [],      
       currentProduct: null,
       currentIndex: -1,
-      isProdAvailableInCart: false
+      isProdAvailableInCart: false,
+      isPurchased: false,
+      responseinvoiceid: ''
     };
   }
 
@@ -46,7 +47,8 @@ class CartList extends Component {
     this.setState({        
         currentProduct: null,
         currentIndex: -1,
-        isProdAvailableInCart: false
+        isProdAvailableInCart: false,
+        isPurchased: false
     });
     this.isProdAvailableInCart ? document.getElementById('BuyAllButton').disabled = false : document.getElementById('BuyAllButton').disabled = true
     
@@ -73,7 +75,13 @@ class CartList extends Component {
   buyAllSelected = () => {
     ProductDataService.buyAllProductsFromCart()
     .then(response => {
-      console.log(response.data);      
+      console.log(response.data); 
+      this.refreshList();
+      this.setState({
+        responseinvoiceid: response.data.invoiceid,
+        isPurchased: true
+      });
+      
     })
     .catch(e => {
       console.log(e);
@@ -156,6 +164,12 @@ class CartList extends Component {
                 ) : "Not present"
             }
             </div>
+            <div>{
+            this.state.isPurchased ?  <PurchaseInvoice id={this.state.responseinvoiceid}></PurchaseInvoice> 
+            : 
+            <div><span> { this.state.message}</span> <Link to={"/products/"} className="badge badge-warning">
+            Shop more </Link> </div>
+            } </div>
                 
       </div>
     );

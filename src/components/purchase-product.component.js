@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import ProductDataService from "../services/product.service";
-import Invoice from "./invoice.component"
 import PurchaseInvoice from "./purchase-invoice.component"
 import {Switch, Route, Link} from "react-router-dom"
 
@@ -41,7 +40,6 @@ export default class PurchaseProduct extends Component {
     this.setState({quantity: e.target.value,
         billedAmount: e.target.value*this.state.currentProduct.price
     });
-    //this.setState({billedAmount: this.state.quantity*this.state.currentProduct.price});
   };
 
   
@@ -86,13 +84,7 @@ export default class PurchaseProduct extends Component {
              isPurchased: true
             });
           console.log(this.state.responseInvoice);
-
-         // <Link to={"/invoice/" + this.state.responseInvoice.invoiceid}
-         //   className="badge badge-warning"
-         // >
-         //   Get Invoice
-         // </Link> 
-            
+           
       })
     .catch(e => {
         console.log(e);

@@ -6,6 +6,6 @@ export default axios.create({
     "Content-type": "application/json",
     "Access-Control-Allow-Origin": "http://localhost:3000",
     "Access-Control-Allow-Headers": "Content-type",
-    "Access-Control-Allow-Methods": "GET, OPTIONS, POST, PUT"
+    "Access-Control-Allow-Methods": "GET, DELETE, POST, PUT"
   }
 });
